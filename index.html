@@ -217,6 +217,21 @@
 				}
 			}
 			@media (max-width: 768px) {
+				.resume-mode.active {
+					grid-template-columns: 1fr;  /* Revert to single column layout */
+					gap: 1rem;
+				}
+
+				.resume-sidebar {
+					position: relative;  /* Revert sticky positioning */
+					height: auto;
+					padding: 1.5rem;
+				}
+
+				.resume-content {
+					padding: 1.5rem;
+				}
+
 				.terminal {
 					grid-template-columns: 1fr;
 					height: auto;
@@ -272,7 +287,19 @@
 					overflow-y: auto;
 				}
 
-				/* Keep input area visible and styled */
+				/* Only scroll to input when explicitly interacting with input */
+				input.command-input:focus {
+					scroll-behavior: smooth;
+					/* Add a delay before scrolling to prevent accidental jumps */
+					transition-delay: 0.3s;
+				}
+
+				/* Prevent automatic scrolling when just viewing content */
+				.terminal-content.showing-all {
+					scroll-behavior: auto;
+				}
+
+				/* Keep input area visible but less aggressive */
 				.prompt {
 					position: sticky;
 					bottom: 0;
@@ -280,6 +307,7 @@
 					padding: 0.5rem;
 					margin: 0;
 					border-top: 1px solid rgba(255, 255, 255, 0.1);
+					z-index: 10;
 				}
 			}
 			/* Additional mobile optimizations */
