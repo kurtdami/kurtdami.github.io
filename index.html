@@ -217,19 +217,79 @@
 				}
 			}
 			@media (max-width: 768px) {
-				.resume-mode.active {
+				.terminal {
 					grid-template-columns: 1fr;
-					gap: 0;
-				}
-				.resume-sidebar {
-					position: relative;
 					height: auto;
+					min-height: 100vh;
+				}
+				
+				.terminal-sidebar {
+					padding: 1rem;
 					border-right: none;
 					border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-					width: 100%;
 				}
-				.resume-content {
-					padding: 1.5rem;
+
+				.terminal-main {
+					margin: 0.5rem;
+				}
+
+				.intro {
+					margin-bottom: 0.75rem;  /* Further reduced margin */
+				}
+
+				.intro .avatar {
+					width: 80px;
+					height: 80px;
+				}
+
+				.intro p {
+					font-size: 0.9rem;
+					margin-bottom: 0.5rem;
+				}
+
+				/* Mobile input optimizations */
+				.command-input {
+					font-size: 16px !important;
+					padding: 0.5rem 0;  /* Added padding for better touch target */
+				}
+
+				.command-wrapper {
+					padding: 0.25rem 0;  /* Added padding for better touch area */
+				}
+
+				/* Improve terminal scrolling and layout on mobile */
+				.terminal-content {
+					-webkit-overflow-scrolling: touch;
+					max-height: 65vh;  /* Slightly increased height */
+					padding: 0.75rem;
+				}
+
+				/* Keep input area visible and styled */
+				.prompt {
+					position: sticky;
+					bottom: 0;
+					background: #000;
+					padding: 0.5rem;
+					margin: 0;
+					border-top: 1px solid rgba(255, 255, 255, 0.1);  /* Added border for visual separation */
+				}
+			}
+			/* Additional mobile optimizations */
+			@media (max-width: 480px) {
+				.terminal-sidebar {
+					padding: 0.75rem;
+				}
+
+				.terminal-main {
+					margin: 0.25rem;
+				}
+
+				.terminal-content {
+					padding: 0.75rem;
+				}
+
+				.intro p {
+					font-size: 0.85rem;
 				}
 			}
 			/* Add these styles for autosuggestion */
@@ -613,6 +673,35 @@ At TC Energy, I supported natural gas infrastructure projects, including the $14
 				input.addEventListener('blur', () => {
 					suggestion.textContent = '';
 				});
+
+				// Mobile-specific event handlers
+				if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+					input.addEventListener('keyup', function(e) {
+						// Use space for autocomplete on mobile
+						if (e.key === ' ' && suggestion.textContent) {
+							e.preventDefault();
+							this.value = suggestion.textContent.trim();
+							suggestion.textContent = '';
+							// Prevent the space from being added
+							this.value = this.value.replace(/\s+$/, '');
+						}
+					});
+
+					// Prevent zoom on focus
+					input.addEventListener('focus', function(e) {
+						// Add a slight delay to ensure the viewport is set after the keyboard appears
+						setTimeout(() => {
+							document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+						}, 100);
+					});
+
+					// Adjust viewport when keyboard appears/disappears
+					window.addEventListener('resize', () => {
+						document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+						// Scroll to input when keyboard appears
+						input.scrollIntoView({ behavior: 'smooth' });
+					});
+				}
 			});
 		</script>
 	</body>
