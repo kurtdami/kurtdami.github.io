@@ -16,7 +16,7 @@
 			.command-input {
 				background: transparent;
 				border: none;
-				color: #a9b1d6;
+				color: #7aa2f7;  /* Purple color while typing */
 				font-family: inherit;
 				font-size: inherit;
 				width: 100%;
@@ -31,8 +31,45 @@
 			}
 			.output {
 				white-space: pre-wrap;
-				line-height: 1.4;
+				line-height: 1.2;
 				color: #a9b1d6;
+				max-width: none;
+				width: 100%;
+			}
+			.output h2 {
+				color: #fff;
+				margin: 1rem 0 0.15rem 0;  /* Increased top margin for better section separation */
+				font-size: 1.2rem;
+				line-height: 1;
+			}
+			.output h3 {
+				color: #9ece6a;
+				margin: 0.15rem 0 0rem 0;  /* Keep tight spacing for subheadings */
+				font-size: 1rem;
+				line-height: 1;
+			}
+			.output .meta {
+				color: #a9b1d6;
+				margin: 0;
+				font-size: 0.9rem;
+				line-height: 1.2;
+			}
+			.output .project-title {
+				color: #9ece6a;
+				font-weight: bold;
+				margin: 0.15rem 0 0rem 0;  /* Keep tight spacing for project titles */
+				line-height: 1;
+				display: block;
+			}
+			.output p {
+				margin-bottom: 0.5rem;  /* Increased bottom margin for paragraph endings */
+				line-height: 1.2;
+			}
+			.output .contact-link {
+				color: #9ece6a;
+				margin-bottom: 0.1rem;
+				display: block;
+				line-height: 1.2;
 			}
 			.prompt {
 				color: #a9b1d6;
@@ -42,6 +79,9 @@
 			}
 			.terminal-title {
 				color: #a9b1d6;
+			}
+			.typed-command {
+				color: #ffffff;  /* White color for typed commands */
 			}
 			/* Mode toggle styles */
 			.mode-toggle {
@@ -357,6 +397,7 @@ contact     - Get contact information
 clear       - Clear the terminal
 help        - Show this help message
 mode        - Switch between Terminal and Resume modes
+showall     - Display all information at once
 
 Tip: Use Tab key to autocomplete commands`,
 
@@ -400,7 +441,27 @@ Email: your.email@example.com`,
 terminal - Terminal interface (current)
 resume   - Resume view
 
-Use 'mode resume' or 'mode terminal' to switch modes.`
+Use 'mode resume' or 'mode terminal' to switch modes.`,
+
+				showall: `<h2>About</h2>
+I completed my undergraduate degree in Electrical Engineering at the University of Toronto in Canada. In my previous career, I worked as a technical project engineer, building multi-million dollar energy infrastructure in the great white north. Now, I'm pivoting my career and studying for a master's in Software Engineering at California State University, Fullerton, working towards becoming a software engineer.
+
+My hobbies include playing and following soccer, going to rock concerts, and exploring the latest trends in technologies, particularly in the realms of Crypto/DeFi. I'm excited to combine my engineering background with new software skills to create innovative solutions in the tech world.
+
+<h2>Experience</h2>
+<h3>Technical Project Engineer</h3>TC Energy | May 2016 - Sep. 2022 | Calgary, Canada
+
+At TC Energy, I supported natural gas infrastructure projects, including the $14 billion Coastal GasLink LNG pipeline. I designed compressor and metering stations, improved efficiency through VBA-based cost analysis, and automated processes using Excel Macros. These efforts resulted in significant cost savings and enhanced project efficiency.
+
+<h2>Projects</h2>
+<div class="project-title">Project 1</div>Description of project 1 and technologies used.
+
+<div class="project-title">Project 2</div>Description of project 2 and technologies used.
+
+<h2>Contact</h2>
+<div class="contact-link">GitHub: https://github.com/yourusername</div>
+<div class="contact-link">LinkedIn: https://linkedin.com/in/yourusername</div>
+<div class="contact-link">Email: your.email@example.com</div>`
 			};
 
 			// Initialize terminal
@@ -416,7 +477,7 @@ Use 'mode resume' or 'mode terminal' to switch modes.`
 				const floatingToggle = document.getElementById('floatingToggle');
 
 				// Available commands for autocomplete
-				const availableCommands = ['help', 'about', 'experience', 'projects', 'contact', 'clear', 'mode'];
+				const availableCommands = ['help', 'about', 'experience', 'projects', 'contact', 'clear', 'mode', 'showall'];
 
 				// Tab completion function
 				function getCompletions(partial) {
@@ -498,7 +559,7 @@ Use 'mode resume' or 'mode terminal' to switch modes.`
 							// Show command
 							const promptLine = document.createElement('div');
 							promptLine.className = 'prompt';
-							promptLine.innerHTML = `<span class="prompt-symbol">></span> ${cmd}`;
+							promptLine.innerHTML = `<span class="prompt-symbol">></span> <span class="typed-command">${cmd}</span>`;
 							output.appendChild(promptLine);
 
 							// Process command
@@ -509,9 +570,13 @@ Use 'mode resume' or 'mode terminal' to switch modes.`
 							} else if (cmd === 'mode terminal') {
 								switchMode('terminal');
 							} else if (commands[cmd]) {
+								// Clear previous content if it's the showall command
+								if (cmd === 'showall') {
+									output.innerHTML = '';
+								}
 								const outputLine = document.createElement('div');
 								outputLine.className = 'output';
-								outputLine.textContent = commands[cmd];
+								outputLine.innerHTML = commands[cmd];
 								output.appendChild(outputLine);
 							} else {
 								const errorLine = document.createElement('div');
