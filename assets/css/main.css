@@ -1,5 +1,4 @@
-/* Remove old imports */
-/* Base Theme */
+/* Terminal Theme v1.0.1 */
 :root {
     /* Colors */
     --bg-primary: #000;
@@ -32,8 +31,8 @@
     --border-radius: 8px;
 }
 
-/* Reset */
-* {
+/* Reset and Base Styles */
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -41,40 +40,47 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base Layout */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    min-height: 100vh;
+html {
     background: var(--bg-primary);
     color: var(--text-primary);
     font-family: var(--font-mono);
+    font-size: 16px;
+    line-height: 1.6;
+    height: 100%;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: var(--bg-primary);
+}
+
+/* Terminal Container */
 .terminal-container {
     display: flex;
     align-items: stretch;
     justify-content: center;
+    min-height: 100vh;
     padding: 0;
-    height: 100vh;
-    overflow: hidden;
+    margin: 0;
+    background: var(--bg-primary);
 }
 
+/* Terminal Layout */
 .terminal {
-    background: var(--bg-primary);
     display: grid;
     grid-template-columns: minmax(420px, 520px) 1fr;
-    height: 100%;
-    margin: 0 auto;
-    position: relative;
-    max-width: 100%;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    background: var(--bg-primary);
     overflow: hidden;
 }
 
 /* Sidebar */
 .terminal-sidebar {
-    background: none;
+    background: var(--bg-primary);
     border-right: 1px solid var(--border-color);
     padding: 2rem;
     overflow-y: auto;
@@ -95,6 +101,7 @@ html, body {
     color: var(--text-primary);
     font-size: var(--font-size-xl);
     margin-bottom: var(--space-xs);
+    font-weight: 700;
 }
 
 .intro .title {
@@ -155,15 +162,16 @@ html, body {
 .terminal-title {
     color: var(--text-secondary);
     font-size: var(--font-size-sm);
+    margin-left: var(--space-md);
 }
 
 /* Terminal Content */
 .terminal-content {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 1.5rem;
     font-size: var(--font-size-sm);
-    line-height: 1.4;
+    line-height: 1.6;
 }
 
 .terminal-section {
@@ -176,12 +184,14 @@ html, body {
     color: var(--text-primary);
     font-size: var(--font-size-lg);
     margin-bottom: var(--space-md);
+    font-weight: 700;
 }
 
 .terminal-section h3 {
     color: var(--accent-green);
     font-size: var(--font-size-base);
     margin-bottom: var(--space-sm);
+    font-weight: 700;
 }
 
 .meta {
@@ -196,6 +206,7 @@ html, body {
     display: flex;
     align-items: center;
     margin: var(--space-xs) 0;
+    font-weight: 500;
 }
 
 .prompt-symbol {
@@ -217,6 +228,8 @@ a:hover {
 /* Lists */
 .terminal-list {
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .terminal-list li {
@@ -226,11 +239,14 @@ a:hover {
 
 .terminal-list strong {
     color: var(--text-primary);
+    font-weight: 700;
 }
 
 /* Blinking Cursor */
 .blink {
     animation: blink 1s step-end infinite;
+    display: inline-block;
+    margin-left: 0.2rem;
 }
 
 @keyframes blink {
@@ -245,8 +261,14 @@ a:hover {
 }
 
 @media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+
     .terminal {
         grid-template-columns: 1fr;
+        height: auto;
+        min-height: 100vh;
     }
     
     .terminal-sidebar {
@@ -256,6 +278,8 @@ a:hover {
     .terminal-main {
         margin: 0;
         border-radius: 0;
+        border-left: none;
+        border-right: none;
     }
     
     .avatar {
@@ -265,6 +289,10 @@ a:hover {
 }
 
 @media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+
     :root {
         --space-md: 0.75rem;
         --space-lg: 1rem;
