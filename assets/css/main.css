@@ -105,7 +105,7 @@ body {
 }
 
 .intro .title {
-    color: var(--accent-green);
+    color: var(--accent-blue);
     margin-bottom: var(--space-md);
     font-size: var(--font-size-base);
 }
