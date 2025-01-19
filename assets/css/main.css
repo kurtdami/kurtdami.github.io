@@ -1,13 +1,5 @@
-@import url("fontawesome-all.min.css");
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic");
-
-/*
-	Strata by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
-
-/* CSS Variables */
+/* Remove old imports */
+/* Base Theme */
 :root {
     /* Colors */
     --bg-primary: #000;
@@ -40,37 +32,20 @@
     --border-radius: 8px;
 }
 
-/* Base Styles */
+/* Reset */
 * {
-    backface-visibility: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    box-sizing: border-box;
-    margin: 0;
-	padding: 0;
-}
-
-/* Scrollbar Styles */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
-}
-*::-webkit-scrollbar {
-    width: 4px;
-}
-*::-webkit-scrollbar-track {
-    background: transparent;
-}
-*::-webkit-scrollbar-thumb {
-    background-color: var(--border-color);
-    border-radius: var(--border-radius);
 }
 
 /* Base Layout */
 html, body {
     margin: 0;
     padding: 0;
-		width: 100%;
+    width: 100%;
     min-height: 100vh;
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -78,9 +53,9 @@ html, body {
 }
 
 .terminal-container {
-		display: flex;
-		align-items: stretch;
-			justify-content: center;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
     padding: 0;
     height: 100vh;
     overflow: hidden;
@@ -97,7 +72,7 @@ html, body {
     overflow: hidden;
 }
 
-/* Sidebar Styles */
+/* Sidebar */
 .terminal-sidebar {
     background: none;
     border-right: 1px solid var(--border-color);
@@ -136,7 +111,7 @@ html, body {
     padding-left: var(--space-md);
 }
 
-/* Terminal Main Area */
+/* Terminal Main */
 .terminal-main {
     background: var(--bg-primary);
     margin: 1rem;
@@ -144,7 +119,7 @@ html, body {
     overflow: hidden;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-				display: flex;
+    display: flex;
     flex-direction: column;
 }
 
@@ -152,17 +127,17 @@ html, body {
 .terminal-header {
     background: rgba(255, 255, 255, 0.05);
     padding: 0.75rem 1rem;
-				display: flex;
+    display: flex;
     justify-content: space-between;
-					align-items: center;
+    align-items: center;
     border-bottom: 1px solid var(--border-color);
     -webkit-user-select: none;
     user-select: none;
 }
 
 .terminal-header-left {
-				display: flex;
-					align-items: center;
+    display: flex;
+    align-items: center;
     gap: 6px;
 }
 
@@ -218,8 +193,8 @@ html, body {
 /* Terminal Prompt */
 .prompt {
     color: var(--text-primary);
-				display: flex;
-					align-items: center;
+    display: flex;
+    align-items: center;
     margin: var(--space-xs) 0;
 }
 
@@ -231,7 +206,7 @@ html, body {
 /* Links */
 a {
     color: var(--accent-blue);
-		text-decoration: none;
+    text-decoration: none;
     transition: opacity 0.2s;
 }
 
@@ -241,7 +216,7 @@ a:hover {
 
 /* Lists */
 .terminal-list {
-			list-style: none;
+    list-style: none;
 }
 
 .terminal-list li {
@@ -251,6 +226,15 @@ a:hover {
 
 .terminal-list strong {
     color: var(--text-primary);
+}
+
+/* Blinking Cursor */
+.blink {
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
 }
 
 /* Responsive Design */
@@ -270,10 +254,10 @@ a:hover {
     }
     
     .terminal-main {
-			margin: 0;
-				border-radius: 0;
-			}
-
+        margin: 0;
+        border-radius: 0;
+    }
+    
     .avatar {
         width: 100px;
         height: 100px;
@@ -291,4 +275,4 @@ a:hover {
     .terminal-main {
         padding: var(--space-sm);
     }
-	}
+}
