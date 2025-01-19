@@ -12,8 +12,215 @@
 		
 		<!-- Styles -->
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<style>
+			.command-input {
+				background: transparent;
+				border: none;
+				color: #a9b1d6;
+				font-family: inherit;
+				font-size: inherit;
+				width: 100%;
+				outline: none;
+				padding: 0;
+			}
+			.output-container {
+				margin-bottom: 1rem;
+			}
+			.error {
+				color: #f7768e;
+			}
+			.output {
+				white-space: pre-wrap;
+				line-height: 1.4;
+				color: #a9b1d6;
+			}
+			.prompt {
+				color: #a9b1d6;
+			}
+			.prompt-symbol {
+				color: #7aa2f7;
+			}
+			.terminal-title {
+				color: #a9b1d6;
+			}
+			/* Mode toggle styles */
+			.mode-toggle {
+				color: var(--text-primary, #fff);
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 8px;
+				padding: 0.5rem 1rem;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				font-family: inherit;
+				font-size: 0.9rem;
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+			}
+			.mode-toggle:hover {
+				background: rgba(255, 255, 255, 0.2);
+			}
+			.terminal-header-right {
+				margin-left: auto;
+				padding-right: 1rem;
+			}
+			/* Resume mode styles */
+			.resume-mode {
+				display: none;
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+			.resume-mode.active {
+				display: grid;
+				grid-template-columns: minmax(400px, 500px) 1fr;
+				opacity: 1;
+				min-height: 100vh;
+				gap: 1.5rem;
+			}
+			.terminal-container.hidden {
+				display: none;
+				opacity: 0;
+			}
+			.terminal-container {
+				opacity: 1;
+				transition: opacity 0.3s ease;
+			}
+			.resume-sidebar {
+				background: rgba(0, 0, 0, 0.2);
+				padding: 2rem;
+				border-right: 1px solid rgba(255, 255, 255, 0.1);
+				position: sticky;
+				top: 0;
+				height: 100vh;
+				overflow-y: auto;
+			}
+			.resume-content {
+				padding: 2rem 3rem 2rem 0;
+				max-width: 1200px;
+				margin: 0 auto;
+				width: 100%;
+			}
+			.resume-header {
+				display: flex;
+				justify-content: flex-end;
+				padding: 0.5rem 0;
+				margin-bottom: 1.5rem;
+			}
+			.header-right {
+				margin-left: auto;
+			}
+			.terminal-section {
+				margin-bottom: 2.5rem;
+				max-width: 1000px;
+				border-left: none;
+				padding-left: 0;
+			}
+			.terminal-section h2 {
+				color: #fff;
+				margin-bottom: 1rem;
+				padding-left: 0;
+			}
+			.terminal-section h3 {
+				color: #7aa2f7;
+				margin-bottom: 0.5rem;
+			}
+			.terminal-section .meta {
+				color: #a9b1d6;
+				font-size: 0.9rem;
+				margin-bottom: 1rem;
+			}
+			.terminal-list {
+				list-style: none;
+				padding: 0;
+			}
+			.terminal-list li {
+				margin-bottom: 1rem;
+			}
+			.terminal-list a {
+				color: #7aa2f7;
+				text-decoration: none;
+			}
+			.terminal-list a:hover {
+				text-decoration: underline;
+			}
+			.intro {
+				margin-bottom: 2rem;
+			}
+			.intro .avatar {
+				width: 150px;
+				height: 150px;
+				border-radius: 50%;
+				margin-bottom: 1rem;
+			}
+			.intro h1 {
+				color: #fff;
+				margin-bottom: 0.5rem;
+			}
+			.intro .title {
+				color: #7aa2f7;
+				margin-bottom: 1rem;
+			}
+			.intro p {
+				color: #a9b1d6;
+				line-height: 1.6;
+			}
+			/* Floating toggle in resume mode */
+			.mode-toggle.floating {
+				position: static;
+				box-shadow: none;
+			}
+			/* Responsive adjustments */
+			@media (max-width: 1400px) {
+				.resume-mode.active {
+					grid-template-columns: minmax(350px, 450px) 1fr;
+				}
+			}
+			@media (max-width: 768px) {
+				.resume-mode.active {
+					grid-template-columns: 1fr;
+					gap: 0;
+				}
+				.resume-sidebar {
+					position: relative;
+					height: auto;
+					border-right: none;
+					border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+					width: 100%;
+				}
+				.resume-content {
+					padding: 1.5rem;
+				}
+			}
+			/* Add these styles for autosuggestion */
+			.command-wrapper {
+				position: relative;
+				display: flex;
+				align-items: center;
+				width: 100%;
+			}
+			.command-suggestion {
+				position: absolute;
+				left: 0;
+				color: rgba(169, 177, 214, 0.3);  /* Dimmed version of #a9b1d6 */
+				pointer-events: none;
+				white-space: pre;
+			}
+			.command-input {
+				position: relative;
+				background: transparent;
+				border: none;
+				color: #a9b1d6;
+				font-family: inherit;
+				font-size: inherit;
+				width: 100%;
+				outline: none;
+				padding: 0;
+			}
+		</style>
 	</head>
-	<body>
+	<body data-mode="terminal">
+		<!-- Terminal Mode -->
 		<div class="terminal-container">
 			<div class="terminal">
 				<!-- Sidebar -->
@@ -36,71 +243,312 @@
 							<div class="terminal-header-button red"></div>
 							<div class="terminal-header-button yellow"></div>
 							<div class="terminal-header-button green"></div>
-							<span class="terminal-title">visitor@personal:~</span>
+							<span class="terminal-title">visitor@kurt:~</span>
+						</div>
+						<div class="terminal-header-right">
+							<button class="mode-toggle" id="headerToggle">
+								<span class="toggle-icon">📄</span>
+								<span class="toggle-text">Resume Mode</span>
+							</button>
 						</div>
 					</div>
 					
 					<div class="terminal-content">
-						<div class="prompt">
-							<span class="prompt-symbol">></span> course
-						</div>
-
-						<div class="terminal-section">
-							<h2>About</h2>
-							<p>
-								I completed my undergraduate degree in Electrical Engineering at the University of Toronto in Canada. 
-								In my previous career, I worked as a technical project engineer, building multi-million dollar energy 
-								infrastructure in the great white north. Now, I'm pivoting my career and studying for a master's in 
-								Software Engineering at California State University, Fullerton, working towards becoming a software engineer.
-							</p>
-							<p>
-								My hobbies include playing and following soccer, going to rock concerts, and exploring the latest trends 
-								in technologies, particularly in the realms of Crypto/DeFi. I'm excited to combine my engineering background 
-								with new software skills to create innovative solutions in the tech world.
-							</p>
-						</div>
-
-						<div class="terminal-section">
-							<h2>Experience</h2>
-							<h3>Technical Project Engineer</h3>
-							<div class="meta">TC Energy | May 2016 - Sep. 2022 | Calgary, Canada</div>
-							<p>
-								At TC Energy, I supported natural gas infrastructure projects, including the $14 billion Coastal GasLink LNG pipeline. 
-								I designed compressor and metering stations, improved efficiency through VBA-based cost analysis, and automated 
-								processes using Excel Macros. These efforts resulted in significant cost savings and enhanced project efficiency.
-							</p>
-						</div>
-
-						<div class="terminal-section">
-							<h2>Projects</h2>
-							<ul class="terminal-list">
-								<li>
-									<strong>Project 1</strong><br>
-									Description of project 1 and technologies used.
-								</li>
-								<li>
-									<strong>Project 2</strong><br>
-									Description of project 2 and technologies used.
-								</li>
-							</ul>
-						</div>
-
-						<div class="terminal-section">
-							<h2>Contact</h2>
-							<ul class="terminal-list">
-								<li><a href="https://github.com/yourusername">GitHub</a></li>
-								<li><a href="https://linkedin.com/in/yourusername">LinkedIn</a></li>
-								<li><a href="mailto:your.email@example.com">Email</a></li>
-							</ul>
-						</div>
-
+						<div class="output-container"></div>
 						<div class="prompt">
 							<span class="prompt-symbol">></span>
-							<span class="blink">_</span>
+							<div class="command-wrapper">
+								<span class="command-suggestion"></span>
+								<input type="text" class="command-input" placeholder="Type 'help' for available commands" autocomplete="off">
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+
+		<!-- Resume Mode -->
+		<div class="resume-mode">
+			<!-- Resume Sidebar -->
+			<div class="resume-sidebar">
+				<div class="intro">
+					<img src="images/avatar.jpg" alt="Kurt Da Mi" class="avatar" />
+					<h1>Kurt Da Mi</h1>
+					<div class="title">Software Engineer</div>
+					<p>
+						Software Engineering graduate student at California State University, Fullerton. 
+						Former Technical Project Engineer with experience in large-scale infrastructure projects.
+					</p>
+				</div>
+			</div>
+
+			<!-- Resume Content -->
+			<div class="resume-content">
+				<!-- Add header for consistency -->
+				<div class="resume-header">
+					<div class="header-left"></div>
+					<div class="header-right">
+						<button class="mode-toggle" id="floatingToggle">
+							<span class="toggle-icon">💻</span>
+							<span class="toggle-text">Terminal Mode</span>
+						</button>
+					</div>
+				</div>
+
+				<div class="terminal-section">
+					<h2>About</h2>
+					<p>
+						I completed my undergraduate degree in Electrical Engineering at the University of Toronto in Canada. 
+						In my previous career, I worked as a technical project engineer, building multi-million dollar energy 
+						infrastructure in the great white north. Now, I'm pivoting my career and studying for a master's in 
+						Software Engineering at California State University, Fullerton, working towards becoming a software engineer.
+					</p>
+					<p>
+						My hobbies include playing and following soccer, going to rock concerts, and exploring the latest trends 
+						in technologies, particularly in the realms of Crypto/DeFi. I'm excited to combine my engineering background 
+						with new software skills to create innovative solutions in the tech world.
+					</p>
+				</div>
+
+				<div class="terminal-section">
+					<h2>Experience</h2>
+					<h3>Technical Project Engineer</h3>
+					<div class="meta">TC Energy | May 2016 - Sep. 2022 | Calgary, Canada</div>
+					<p>
+						At TC Energy, I supported natural gas infrastructure projects, including the $14 billion Coastal GasLink LNG pipeline. 
+						I designed compressor and metering stations, improved efficiency through VBA-based cost analysis, and automated 
+						processes using Excel Macros. These efforts resulted in significant cost savings and enhanced project efficiency.
+					</p>
+				</div>
+
+				<div class="terminal-section">
+					<h2>Projects</h2>
+					<ul class="terminal-list">
+						<li>
+							<strong>Project 1</strong><br>
+							Description of project 1 and technologies used.
+						</li>
+						<li>
+							<strong>Project 2</strong><br>
+							Description of project 2 and technologies used.
+						</li>
+					</ul>
+				</div>
+
+				<div class="terminal-section">
+					<h2>Contact</h2>
+					<ul class="terminal-list">
+						<li><a href="https://github.com/yourusername">GitHub</a></li>
+						<li><a href="https://linkedin.com/in/yourusername">LinkedIn</a></li>
+						<li><a href="mailto:your.email@example.com">Email</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			// Define commands
+			const commands = {
+				help: `Available commands:
+about       - Learn about Kurt
+experience  - View work experience
+projects    - See my projects
+contact     - Get contact information
+clear       - Clear the terminal
+help        - Show this help message
+mode        - Switch between Terminal and Resume modes
+
+Tip: Use Tab key to autocomplete commands`,
+
+				about: `About Kurt Da Mi:
+
+I completed my undergraduate degree in Electrical Engineering at the University of Toronto in Canada. 
+In my previous career, I worked as a technical project engineer, building multi-million dollar energy 
+infrastructure in the great white north. Now, I'm pivoting my career and studying for a master's in 
+Software Engineering at California State University, Fullerton, working towards becoming a software engineer.
+
+My hobbies include playing and following soccer, going to rock concerts, and exploring the latest trends 
+in technologies, particularly in the realms of Crypto/DeFi. I'm excited to combine my engineering background 
+with new software skills to create innovative solutions in the tech world.`,
+
+				experience: `Experience:
+
+Technical Project Engineer
+TC Energy | May 2016 - Sep. 2022 | Calgary, Canada
+
+At TC Energy, I supported natural gas infrastructure projects, including the $14 billion Coastal GasLink LNG pipeline. 
+I designed compressor and metering stations, improved efficiency through VBA-based cost analysis, and automated 
+processes using Excel Macros. These efforts resulted in significant cost savings and enhanced project efficiency.`,
+
+				projects: `Projects:
+
+Project 1
+Description of project 1 and technologies used.
+
+Project 2
+Description of project 2 and technologies used.`,
+
+				contact: `Contact Information:
+
+GitHub: https://github.com/yourusername
+LinkedIn: https://linkedin.com/in/yourusername
+Email: your.email@example.com`,
+
+				clear: 'CLEAR',
+
+				mode: `Available modes:
+terminal - Terminal interface (current)
+resume   - Resume view
+
+Use 'mode resume' or 'mode terminal' to switch modes.`
+			};
+
+			// Initialize terminal
+			document.addEventListener('DOMContentLoaded', function() {
+				const input = document.querySelector('.command-input');
+				const suggestion = document.querySelector('.command-suggestion');
+				const output = document.querySelector('.output-container');
+				const terminal = document.querySelector('.terminal-content');
+				const body = document.body;
+				const terminalContainer = document.querySelector('.terminal-container');
+				const resumeMode = document.querySelector('.resume-mode');
+				const headerToggle = document.getElementById('headerToggle');
+				const floatingToggle = document.getElementById('floatingToggle');
+
+				// Available commands for autocomplete
+				const availableCommands = ['help', 'about', 'experience', 'projects', 'contact', 'clear', 'mode'];
+
+				// Tab completion function
+				function getCompletions(partial) {
+					return availableCommands.filter(cmd => cmd.startsWith(partial.toLowerCase()));
+				}
+
+				// Welcome message
+				const welcome = document.createElement('div');
+				welcome.className = 'output';
+				welcome.textContent = "Welcome to Kurt's terminal! Type 'help' for available commands. (Pro tip: Use Tab key for command completion)";
+				output.appendChild(welcome);
+
+				// Command history
+				let commandHistory = [];
+				let historyIndex = -1;
+
+				// Mode switching function
+				function switchMode(mode) {
+					if (mode === 'resume') {
+						terminalContainer.classList.add('hidden');
+						resumeMode.classList.add('active');
+						body.setAttribute('data-mode', 'resume');
+					} else {
+						terminalContainer.classList.remove('hidden');
+						resumeMode.classList.remove('active');
+						body.setAttribute('data-mode', 'terminal');
+						input.focus();
+					}
+				}
+
+				// Toggle handlers
+				headerToggle.addEventListener('click', () => {
+					const currentMode = body.getAttribute('data-mode');
+					switchMode(currentMode === 'terminal' ? 'resume' : 'terminal');
+				});
+
+				floatingToggle.addEventListener('click', () => {
+					switchMode('terminal');
+				});
+
+				// Real-time suggestion function
+				function updateSuggestion() {
+					const currentInput = input.value.trim().toLowerCase();
+					if (currentInput) {
+						const completions = getCompletions(currentInput);
+						if (completions.length > 0) {
+							const firstMatch = completions[0];
+							if (firstMatch.startsWith(currentInput)) {
+								suggestion.textContent = currentInput + firstMatch.slice(currentInput.length);
+								return;
+							}
+						}
+					}
+					suggestion.textContent = '';
+				}
+
+				// Add input event listener for real-time suggestions
+				input.addEventListener('input', updateSuggestion);
+
+				// Handle commands
+				input.addEventListener('keydown', function(e) {
+					if (e.key === 'Tab') {
+						e.preventDefault();
+						const currentInput = this.value.trim().toLowerCase();
+						if (currentInput && suggestion.textContent) {
+							// Use the current suggestion that's being shown
+							this.value = suggestion.textContent;
+							suggestion.textContent = ''; // Clear suggestion
+						}
+					} else if (e.key === 'Enter') {
+						suggestion.textContent = ''; // Clear suggestion
+						const cmd = this.value.trim().toLowerCase();
+						
+						if (cmd) {
+							// Add to history
+							commandHistory.unshift(cmd);
+							historyIndex = -1;
+
+							// Show command
+							const promptLine = document.createElement('div');
+							promptLine.className = 'prompt';
+							promptLine.innerHTML = `<span class="prompt-symbol">></span> ${cmd}`;
+							output.appendChild(promptLine);
+
+							// Process command
+							if (cmd === 'clear') {
+								output.innerHTML = '';
+							} else if (cmd === 'mode resume') {
+								switchMode('resume');
+							} else if (cmd === 'mode terminal') {
+								switchMode('terminal');
+							} else if (commands[cmd]) {
+								const outputLine = document.createElement('div');
+								outputLine.className = 'output';
+								outputLine.textContent = commands[cmd];
+								output.appendChild(outputLine);
+							} else {
+								const errorLine = document.createElement('div');
+								errorLine.className = 'error';
+								errorLine.textContent = `Command not found: ${cmd}. Type 'help' for available commands.`;
+								output.appendChild(errorLine);
+							}
+
+							// Clear input and scroll
+							this.value = '';
+							terminal.scrollTop = terminal.scrollHeight;
+						}
+					} else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+						e.preventDefault();
+						if (commandHistory.length === 0) return;
+
+						if (e.key === 'ArrowUp') {
+							historyIndex = Math.min(historyIndex + 1, commandHistory.length - 1);
+						} else {
+							historyIndex = Math.max(historyIndex - 1, -1);
+						}
+
+						this.value = historyIndex === -1 ? '' : commandHistory[historyIndex];
+					}
+				});
+
+				// Focus input on terminal click
+				terminal.addEventListener('click', () => input.focus());
+				
+				// Initial focus
+				input.focus();
+
+				// Clear suggestion on blur
+				input.addEventListener('blur', () => {
+					suggestion.textContent = '';
+				});
+			});
+		</script>
 	</body>
 </html>
